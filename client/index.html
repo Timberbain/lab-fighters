@@ -1,0 +1,244 @@
+<html>
+
+	<head>
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="jquery-1.8.1.js"></script>
+	</head>
+
+	<body>
+		
+		<script>
+			var ObjectType = {
+				OBJECT:0,
+				HERO:1,
+				POINT:2,
+				WALL: 3,
+				FLOOR: 4,
+				PROJECTILE: 5,
+				PARAN: 6,
+				FARAN: 7
+			};
+			
+			var keyBoradType = {
+				KEY_UP : 38,
+				KEY_RIGHT : 39,
+				KEY_DOWN : 40,
+				KEY_LEFT : 37,
+				KEY_SPACE: 32
+			};
+			var keyBoard = {};
+			
+			$(document).ready(init);
+			var socket;
+			function init(){
+				socket = io();
+				socket.on('update', updateGUI);
+				
+				bindKeyBoardMap();
+			}
+			
+			function updateGUI(response){
+				//var r = JSON.parse(atob(response));
+				var r = JSON.parse(response);
+				
+				
+				var staticObjects = r.s;
+				var dynamicObjects = r.d;
+				var HUDinfo = r.h;
+				
+				
+				//console.log(staticObjects, dynamicObjects, HUDinfo);
+				var c = document.getElementById("GameBoard");
+				var ctx = c.getContext("2d");
+				
+				/* Clear board */				
+				ctx.fillStyle = "#FFFFFF";
+				var gbWidth = c.getAttribute("width");
+				var gbHeight = c.getAttribute("height");
+				ctx.fillRect(0, 0, gbWidth, gbHeight);
+
+				ctx.strokeStyle = "#BBBBBB";
+				
+				
+				ctx.beginPath();
+				ctx.stroke();
+			
+				/* Find transformation */
+				var midpoint = { x: HUDinfo.focus.position.x, y: HUDinfo.focus.position.y }; 
+				var w = HUDinfo.focus.sight;
+				var resolution = { x: gbWidth / (w*2), y: gbHeight / (w*2)};
+				
+				
+				var origo = {
+					x: midpoint.x - w,
+					y: midpoint.y - w
+				};
+				
+				ctx.fillStyle = "#000000";
+				//var resolution = 10;
+				for(var s in staticObjects){
+					var currentObject = staticObjects[s];
+					if( currentObject.type == ObjectType.WALL ){
+						//ctx.drawImage(map[y][x].img, x*resolution, y*resolution, resolution, resolution);
+						//var guiPosition = {x: ((currentObject.position.x - origo.x) - currentObject.size/2) * resolution.x, y: ((currentObject.position.y - origo.y) - currentObject.size/2)*resolution.x};
+						var guiPosition = {x: (currentObject.position.x - origo.x) * resolution.x, y: (currentObject.position.y - origo.y)*resolution.x};
+						ctx.fillRect(guiPosition.x, guiPosition.y, currentObject.size * resolution.x, currentObject.size * resolution.x);
+					}
+				}
+				
+				for(var d in dynamicObjects){
+					var currentObject = dynamicObjects[d];
+				
+				// ctx.strokeStyle = "#000000";
+				// ctx.beginPath();
+				// ctx.moveTo(object.position.x * this.resolution.x, object.position.y * this.resolution.y);
+				// ctx.lineTo((object.position.x + object.direction.x * object.speed) * this.resolution.x, (object.position.y + object.direction.y * object.speed) * this.resolution.y);
+				// ctx.stroke();
+					if( currentObject.type == ObjectType.PARAN){
+						// console.log(object.image);
+						//var oi = object.getImage();
+						//ctx.drawImage(oi.src, oi.x, oi.y, oi.w, oi.h, object.position.x*this.resolution.x, object.position.y*this.resolution.y, this.resolution.x, this.resolution.y);
+						ctx.fillStyle = "#FFFF00";
+					} else if( currentObject.type == ObjectType.FARAN){
+						ctx.fillStyle = "#FF0000";
+					} else if( currentObject.type == ObjectType.POINT){
+						ctx.fillStyle = "#0000FF";
+					} else if( currentObject.type == ObjectType.PROJECTILE){
+						ctx.fillStyle = "#222222";
+					}
+					//var guiPosition = {x: ((currentObject.position.x - origo.x) - currentObject.size/2) * resolution.x, y: ((currentObject.position.y - origo.y) - currentObject.size/2)*resolution.x};
+					var guiPosition = {x: (currentObject.position.x - origo.x) * resolution.x, y: (currentObject.position.y - origo.y)*resolution.x};
+					//console.log(currentObject.position.x - origo.x, currentObject.position.y - origo.y);
+					//console.log(guiPosition);'
+					ctx.fillRect(guiPosition.x, guiPosition.y, currentObject.size * resolution.x, currentObject.size * resolution.y);
+					ctx.strokeStyle="#000000";	
+					ctx.beginPath();
+					ctx.rect(guiPosition.x, guiPosition.y, currentObject.size * resolution.x, currentObject.size * resolution.y);
+					ctx.stroke();
+					//console.log(currentObject.name);
+					if( currentObject.name != undefined ){
+						ctx.font = "bold 12px Arial";
+						
+						var textdimensions = ctx.measureText(currentObject.name);
+						ctx.fillStyle = "#AAAAAA";
+						ctx.fillText(currentObject.name, 3 + (guiPosition.x + resolution.x/2) - textdimensions.width / 2, 3 + guiPosition.y - resolution.y/5);
+						ctx.fillStyle = "#000000";
+						ctx.fillText(currentObject.name, (guiPosition.x + resolution.x/2) - textdimensions.width / 2, guiPosition.y - resolution.y/5);
+						//ctx.strokeStyle="#000000";
+						//ctx.lineWidth=1;
+						//ctx.strokeText(currentObject.name, (guiPosition.x + resolution.x/2) - textdimensions.width / 2, guiPosition.y - resolution.y/5);
+					}
+				}
+				
+				ctx.font = "20px Arial";
+				var textdimensions = ctx.measureText(HUDinfo.focus.score);
+				ctx.fillStyle = "#FFFFFF";
+				ctx.fillRect(5, 5, textdimensions.width + 10, 35 );
+				ctx.strokeStyle="#000000";
+				ctx.rect(5, 5, textdimensions.width + 10, 35 );
+				ctx.stroke();
+				ctx.fillStyle = "#0000FF";
+				ctx.fillText(HUDinfo.focus.score, 10, 20 + 10);
+				
+			}
+						
+			function bindKeyBoardMap(){
+				document.addEventListener('keydown', function(event) {
+					if(event.keyCode == keyBoradType.KEY_UP) {
+						keyBoard[keyBoradType.KEY_UP] = true;
+					}
+					if(event.keyCode == keyBoradType.KEY_DOWN) {
+						keyBoard[keyBoradType.KEY_DOWN] = true;
+					}
+					if(event.keyCode == keyBoradType.KEY_LEFT) {
+						keyBoard[keyBoradType.KEY_LEFT] = true;		
+					}
+					if(event.keyCode == keyBoradType.KEY_RIGHT) {
+						keyBoard[keyBoradType.KEY_RIGHT] = true;
+					}
+					if(event.keyCode == keyBoradType.KEY_SPACE) {
+						keyBoard[keyBoradType.KEY_SPACE] = true;
+					}
+					
+					CheckMovement();
+					
+					
+				});
+				
+				document.addEventListener('keydown', function(event) {
+					
+					if(event.keyCode == keyBoradType.KEY_SPACE) {
+						socket.emit("attack");
+					}
+					
+				});
+				
+				
+				document.addEventListener('keyup', function(event) {
+					if(event.keyCode == keyBoradType.KEY_UP) {
+						keyBoard[keyBoradType.KEY_UP] = false;
+					}
+					if(event.keyCode == keyBoradType.KEY_DOWN) {
+						keyBoard[keyBoradType.KEY_DOWN] = false;
+					}
+					if(event.keyCode == keyBoradType.KEY_LEFT) {
+						keyBoard[keyBoradType.KEY_LEFT] = false;
+					}
+					if(event.keyCode == keyBoradType.KEY_RIGHT) {
+						keyBoard[keyBoradType.KEY_RIGHT] = false;
+					}
+					if(event.keyCode == keyBoradType.KEY_SPACE) {
+						keyBoard[keyBoradType.KEY_SPACE] = false;
+					}
+					CheckMovement();
+				});
+			}
+			
+			function CheckMovement(){
+			
+				var anydirectionispressed = false;
+				if( keyBoard[keyBoradType.KEY_UP] || 
+					keyBoard[keyBoradType.KEY_RIGHT] || 
+					keyBoard[keyBoradType.KEY_DOWN] || 
+					keyBoard[keyBoradType.KEY_LEFT]){
+					anydirectionispressed = true;
+				}
+				
+				var direction = {x: 0, y:0};
+				if( anydirectionispressed ){
+					
+					if(keyBoard[keyBoradType.KEY_UP]) {
+						direction.y = -1;
+						// this.animation.setAnimation("move_up");
+					
+					} else if(keyBoard[keyBoradType.KEY_DOWN]) {
+						direction.y = 1;
+						// this.animation.setAnimation("move_down");
+					} else {
+						direction.y = 0;
+					}
+					
+					if(keyBoard[keyBoradType.KEY_LEFT]) {
+						direction.x = -1;
+						// this.animation.setAnimation("move_left");
+					
+					} else if(keyBoard[keyBoradType.KEY_RIGHT]) {
+						direction.x = 1;
+						// this.animation.setAnimation("move_right");
+					} else {
+						direction.x = 0;
+					}
+					socket.emit("move", direction);
+
+				} else {
+					if(direction.x == 0 && direction.y == 0){
+						socket.emit("stop");
+					}
+					
+				}
+			}
+
+		</script>
+		<canvas id="GameBoard" height="300" width="300" style="border: 1px solid black;"></canvas>
+	</body>
+</html>
