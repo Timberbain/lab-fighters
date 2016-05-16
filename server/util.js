@@ -18,7 +18,12 @@ function Profiler(){
 	
 	this.log = function(id){
 		if(this.profiles[id] != undefined)
-			console.log(id, this.profiles[id].count, this.profiles[id].acc, this.profiles[id].acc / this.profiles[id].count);
+			console.log(
+				id, 
+				this.profiles[id].count, 
+				this.profiles[id].acc, 
+				this.profiles[id].acc / this.profiles[id].count
+			);
 	};
 	
 	this.reset = function(id){

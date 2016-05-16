@@ -65,7 +65,10 @@ function GameObject(){
 	this.checkCollision = function( object ){
 		var r1 = this.properties.size/2;
 		var r2 = object.properties.size/2;
-		var distance = Math.sqrt( Math.pow( this.properties.position.x - object.properties.position.x, 2) + Math.pow( this.properties.position.y - object.properties.position.y, 2) );
+		var distance = Math.sqrt( 
+			Math.pow( this.properties.position.x - object.properties.position.x, 2) + 
+			Math.pow( this.properties.position.y - object.properties.position.y, 2) 
+			);
 		if( distance < r1 + r2){
 			this.Collision( object );
 			object.Collision( this );
@@ -101,7 +104,9 @@ function Gun(){
 	this.ammo = 100;
 	this.Shoot = function(parent){
 		this.ammo--;
-		return new Bullet(parent, {x:parent.properties.position.x, y:parent.properties.position.y}, {x:parent.properties.direction.x, y:parent.properties.direction.y});
+		return new Bullet(parent, 
+			{x:parent.properties.position.x, y:parent.properties.position.y}, 
+			{x:parent.properties.direction.x, y:parent.properties.direction.y});
 	}
 }
 
@@ -116,12 +121,18 @@ function Bullet( parent, position, direction ){
 	that.properties.parent = parent;
 	
 	that.Update = function( world, deltaT ){
-		var realSpeed = Math.sqrt(Math.pow(this.properties.direction.x * this.properties.speed, 2) + Math.pow(this.properties.direction.y * this.properties.speed, 2));
+		var realSpeed = Math.sqrt(
+			Math.pow(this.properties.direction.x * this.properties.speed, 2) + 
+			Math.pow(this.properties.direction.y * this.properties.speed, 2));
 		var speedDiff = realSpeed - this.properties.speed;
 
 		var movementData = {
-			x: this.properties.position.x + (this.properties.direction.x * (this.properties.speed - speedDiff)) * deltaT,
-			y: this.properties.position.y + (this.properties.direction.y * (this.properties.speed - speedDiff)) * deltaT
+			x: this.properties.position.x + 
+				(this.properties.direction.x * (this.properties.speed - speedDiff)) * 
+				deltaT,
+			y: this.properties.position.y + 
+			(this.properties.direction.y * (this.properties.speed - speedDiff)) * 
+			deltaT
 		};
 		// console.log( realSpeed );
 		if( this.properties.speed > 0){
@@ -195,12 +206,18 @@ function HeroObject(position, direction, name){
 				this.properties.speed = 0;
 			}
 		}
-		var realSpeed = Math.sqrt(Math.pow(this.properties.direction.x * this.properties.speed, 2) + Math.pow(this.properties.direction.y * this.properties.speed, 2));
+		var realSpeed = Math.sqrt(
+			Math.pow(this.properties.direction.x * this.properties.speed, 2) + 
+			Math.pow(this.properties.direction.y * this.properties.speed, 2));
 		var speedDiff = realSpeed - this.properties.speed;
 
 		var movementData = {
-			x: this.properties.position.x + (this.properties.direction.x * (this.properties.speed - speedDiff)) * deltaT,
-			y: this.properties.position.y + (this.properties.direction.y * (this.properties.speed - speedDiff)) * deltaT
+			x: this.properties.position.x + 
+				(this.properties.direction.x * (this.properties.speed - speedDiff)) *
+				deltaT,
+			y: this.properties.position.y + 
+				(this.properties.direction.y * (this.properties.speed - speedDiff)) *
+				deltaT
 		};
 		// console.log("New position: ", movementData);
 
@@ -224,7 +241,9 @@ function HeroObject(position, direction, name){
 		} else if( object.properties.type == ObjectType.WALL ){
 			this.properties.speed = 0;
 		} 
-		else if( util.isDefined(object.properties.parent) && object.properties.parent.id != object.id && object.properties.type == ObjectType.PROJECTILE ){
+		else if( util.isDefined(object.properties.parent) && 
+			object.properties.parent.id != object.id && 
+			object.properties.type == ObjectType.PROJECTILE ){
 			this.properties.speed = 0;
 		}
 		

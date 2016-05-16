@@ -43,7 +43,8 @@ function World(){
 			} else {
 				for( var j in this.dynamicObjects ){
 					var objectB = this.dynamicObjects[j];
-					if( !(checked[j] && checked[j][i]) && !objectA.Equals(objectB) && !objectB.isDead){
+					if( !(checked[j] && checked[j][i]) && 
+						!objectA.Equals(objectB) && !objectB.isDead){
 						objectA.checkCollision( objectB );
 						checked[i] ? checked[i][j] = true : checked[i] = {j:true};
 					}
@@ -55,15 +56,22 @@ function World(){
 	this.GetStaticObjectsBoxProperties = function(rx, ry, rw, rh){
 		var rry1 = ry > 0 ? ry : 0;
 		var rrx1 = rx > 0 ? rx : 0;
-		var rry2 = ry + rh < this.staticObjects.length ? ry + rh : this.staticObjects.length - 1;
-		var rrx2 = rx + rw < this.staticObjects[0].length ? rx + rw : this.staticObjects[0].length - 1;
+		var rry2 = ry + rh < this.staticObjects.length ? 
+			ry + rh : 
+			this.staticObjects.length - 1;
+		var rrx2 = rx + rw < this.staticObjects[0].length ? 
+			rx + rw : 
+			this.staticObjects[0].length - 1;
 		
 		var requestedStaticObjects = [];
 		// console.log(rrx1, rry1, rrx2, rry2);
 		for(y = rry1; y <= rry2; y++ ){
 			for(x = rrx1; x <= rrx2; x++){
-				if( util.isDefined(this.staticObjects[Math.ceil(y)]) && util.isDefined(this.staticObjects[Math.ceil(y)][Math.ceil(x)])) {
-					requestedStaticObjects.push( this.staticObjects[Math.ceil(y)][Math.ceil(x)].GetSimpleProperties() );
+				if( util.isDefined(this.staticObjects[Math.ceil(y)]) && 
+					util.isDefined(this.staticObjects[Math.ceil(y)][Math.ceil(x)])) {
+					requestedStaticObjects.push( 
+						this.staticObjects[Math.ceil(y)][Math.ceil(x)].GetSimpleProperties() 
+					);
 				}
 			}
 		}
@@ -73,8 +81,10 @@ function World(){
 	this.GetDynamicObjectsBoxProperties = function(rx, ry, rw, rh){
 		var dynamicObjects = [];
 		for(var dy in this.dynamicObjects){
-			if(this.dynamicObjects[dy].properties.position.x > rx && this.dynamicObjects[dy].properties.position.x < rx + rw){
-				if(this.dynamicObjects[dy].properties.position.y > ry && this.dynamicObjects[dy].properties.position.y < ry + rh){
+			if(this.dynamicObjects[dy].properties.position.x > rx && 
+				this.dynamicObjects[dy].properties.position.x < rx + rw){
+				if(this.dynamicObjects[dy].properties.position.y > ry && 
+					this.dynamicObjects[dy].properties.position.y < ry + rh){
 					dynamicObjects.push(this.dynamicObjects[dy].GetSimpleProperties());
 				}
 			}

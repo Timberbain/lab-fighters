@@ -42,11 +42,19 @@ function Player(socket, name, gameObject){
 		var sight = this.gameObject.properties.sight;
 		
 		// profiler.start("GetStaticObjectsBoxProperties");
-		var staticObjects = world.GetStaticObjectsBoxProperties(pos.x - (sight + 1), pos.y - (sight + 1 ), (sight+1) * 2, (sight+1) * 2);
+		var staticObjects = world.GetStaticObjectsBoxProperties(
+				pos.x - (sight + 1), 
+				pos.y - (sight + 1 ), 
+				(sight+1) * 2, 
+				(sight+1) * 2);
 		// profiler.end("GetStaticObjectsBoxProperties");
 		
 		// profiler.start("GetDynamicObjectsBoxProperties");
-		var dynamicObjects = world.GetDynamicObjectsBoxProperties(pos.x - (sight + 1), pos.y - (sight + 1 ), (sight+1) * 2, (sight+1) * 2);
+		var dynamicObjects = world.GetDynamicObjectsBoxProperties(
+				pos.x - (sight + 1), 
+				pos.y - (sight + 1 ), 
+				(sight+1) * 2, 
+				(sight+1) * 2);
 		// profiler.end("GetDynamicObjectsBoxProperties");
 		
 		
@@ -99,10 +107,16 @@ function Game(){
 		var hero;
 		if( Math.random()*8 <= 4 ) {
 			console.log(name + " has been reincarnated as Paran");
-			hero = new p_Objects.ParanHero({x:5 * Math.random()*5, y:5*Math.random()*5}, {x:0,y:0}, name);
+			hero = new p_Objects.ParanHero(
+				{x:5 * Math.random()*5, y:5*Math.random()*5}, 
+				{x:0,y:0}, 
+				name);
 		} else {
 			console.log(name + " has been reincarnated as Faran");
-			hero = new p_Objects.FaranHero({x:5 * Math.random()*5, y:5*Math.random()*5}, {x:0,y:0}, name);
+			hero = new p_Objects.FaranHero(
+				{x:5 * Math.random()*5, y:5*Math.random()*5}, 
+				{x:0,y:0}, 
+				name);
 		}
 		
 		
@@ -154,15 +168,20 @@ function Game(){
 					}
 				}
 				if( x == 4 && y > 5 && y < 9){
-					map[y][x] = new p_Objects.MapObject( p_Objects.ObjectType.WALL, {x:x, y:y} );
+					map[y][x] = new p_Objects.MapObject( 
+						p_Objects.ObjectType.WALL, {x:x, y:y} );
 				}else if( x == 10 && y > 8 && y < 15){
-					map[y][x] = new p_Objects.MapObject( p_Objects.ObjectType.WALL, {x:x, y:y} );
+					map[y][x] = new p_Objects.MapObject( 
+						p_Objects.ObjectType.WALL, {x:x, y:y} );
 				}else if( x > 3 && x < 13 && y == 20 ){
-					map[y][x] = new p_Objects.MapObject( p_Objects.ObjectType.WALL, {x:x, y:y} );
+					map[y][x] = new p_Objects.MapObject( 
+						p_Objects.ObjectType.WALL, {x:x, y:y} );
 				} else if( x == 4 && y == 5 ){
-					map[y][x] = new p_Objects.MapObject( p_Objects.ObjectType.WALL, {x:x, y:y} );
+					map[y][x] = new p_Objects.MapObject( 
+						p_Objects.ObjectType.WALL, {x:x, y:y} );
 				} else {
-					map[y][x] = new p_Objects.MapObject( p_Objects.ObjectType.FLOOR, {x:x, y:y} );
+					map[y][x] = new p_Objects.MapObject( 
+						p_Objects.ObjectType.FLOOR, {x:x, y:y} );
 				}
 			}
 		}
@@ -179,9 +198,9 @@ function Game(){
 		// }).responseText + ")");
 				
 		
-		var rawMap = eval("(" + request('POST', 'http://www.brandvik.se/labyrintFighters/server/levelManager.php', {
-			json: { levelname: levelname }
-		}).body + ")");
+		var rawMap = eval("(" + request('POST', 
+			'http://www.brandvik.se/labyrintFighters/server/levelManager.php', 
+			{ json: { levelname: levelname } }).body + ")");
 		
 		var map = [];
 		for(var y in rawMap){
@@ -222,8 +241,10 @@ function Game(){
 					
 					var folder = "walls/";
 					var img = "stub.png";
-					if(posibilities.l || posibilities.t || posibilities.r || posibilities.b){
-						if(posibilities.l && posibilities.t && posibilities.r && posibilities.b){
+					if(posibilities.l || posibilities.t || 
+						posibilities.r || posibilities.b){
+						if(posibilities.l && posibilities.t && 
+							posibilities.r && posibilities.b){
 							img = "ltrb.png";
 						} else {
 							var str = "";
@@ -237,7 +258,8 @@ function Game(){
 					}
 					var path = folder + img;			
 				
-					map[y][x] = new p_Objects.MapObject( p_Objects.ObjectType.WALL, {x:x, y:y}, {x: 0, y:0}, path );
+					map[y][x] = new p_Objects.MapObject( 
+						p_Objects.ObjectType.WALL, {x:x, y:y}, {x: 0, y:0}, path );
 				} else {
 					map[y][x] = null; //new p_Objects.MapObject( p_Objects.ObjectType.FLOOR, {x:x, y:y}, {x: 0, y:0} );
 				}

@@ -38,7 +38,8 @@ function EventHandler(){
 		var sy = object.properties.position.y;// + object.size/2;
 		var size = object.properties.size;
 
-		var ray = this.collisionHandler.CalculateMapCollision(sx, sy, data.x, data.y, world.staticObjects, size);
+		var ray = this.collisionHandler.CalculateMapCollision(
+			sx, sy, data.x, data.y, world.staticObjects, size);
 		var prevpos = {x:sx,y:sy};
 		for(var r in ray){
 			if(ray[r].hit){

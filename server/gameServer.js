@@ -1,6 +1,12 @@
 var io;
 var game;
-var listofnames = ['Ellis', 'Arturo', 'Obdulia', 'Merry', 'Merna', 'Cherri', 'Daniela', 'Orlando', 'Renata', 'Barton', 'Yessenia', 'Alycia', 'Nigel', 'Kellie', 'Bonnie', 'Nga', 'Anisa', 'Jasper', 'Karla', 'Tai', 'Letitia', 'Chrissy', 'Kaci', 'Iris', 'Zelda', 'Blanch', 'Veda', 'Benedict', 'Daphine', 'Livia', 'Kacie', 'Collen', 'Colette', 'Elwood', 'Chan', 'Alaine', 'Treasa', 'Brianna', 'Jewell', 'Shiloh', 'Hettie', 'Art', 'Cami', 'Johnsie', 'Man', 'Rodrick', 'Verline', 'Harvey', 'Emilia', 'Rigoberto'];
+var listofnames = ['Ellis', 'Arturo', 'Obdulia', 'Merry', 'Merna', 'Cherri', 
+	'Daniela', 'Orlando', 'Renata', 'Barton', 'Yessenia', 'Alycia', 'Nigel', 
+	'Kellie', 'Bonnie', 'Nga', 'Anisa', 'Jasper', 'Karla', 'Tai', 'Letitia', 
+	'Chrissy', 'Kaci', 'Iris', 'Zelda', 'Blanch', 'Veda', 'Benedict', 'Daphine', 
+	'Livia', 'Kacie', 'Collen', 'Colette', 'Elwood', 'Chan', 'Alaine', 'Treasa', 
+	'Brianna', 'Jewell', 'Shiloh', 'Hettie', 'Art', 'Cami', 'Johnsie', 'Man', 
+	'Rodrick', 'Verline', 'Harvey', 'Emilia', 'Rigoberto'];
 
 var p_Game = require('./Game');
 var util = require('./util');
@@ -18,12 +24,14 @@ exports.initGameServer = function(_io){
 		var address = socket.handshake.address;
 		address = address.split(":");
 		address = address[address.length - 1];
-		var randomGivenName = listofnames[ Math.round(Math.random() * (listofnames.length - 1)) ];
+		var randomGivenName = 
+			listofnames[ Math.round( Math.random() * (listofnames.length - 1)) ];
 		console.log('New player joined: ' + randomGivenName + ": " + address);
 		Game.AddNewPlayer(socket, randomGivenName);
 		
 		socket.on('disconnect', function(){
-			console.log("Player: " + randomGivenName + ": " + address +  " Disconnected");
+			console.log("Player: " + randomGivenName + ": " + 
+				address +  " Disconnected");
 			// Game.RemovePlayer(socket);
 		});
 		
